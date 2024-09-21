@@ -36,3 +36,4 @@ async def login(request: Request, username: str = Form(...), password: str = For
         raise HTTPException(status_code=400, detail="Invalid username or password")
 
     return templates.TemplateResponse("index.html", {"request": request, "message": "Login successful!"})
+
