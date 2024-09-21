@@ -18,7 +18,7 @@ def finding(item_id: int):
     for value in data:
         if value['id'] == item_id:
             return value
-    return None  # Return None if not found
+    return None
 
 @app.get('/get')
 def read_root():
