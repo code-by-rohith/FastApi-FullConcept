@@ -6,7 +6,7 @@ from random import randrange
 app = FastAPI()
 
 class Item(BaseModel):
-    name: str
+    name: str =...
     price: float
     id: Optional[int] = None
     published: bool = True
