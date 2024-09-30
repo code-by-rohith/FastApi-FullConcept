@@ -37,3 +37,4 @@ async def login(request: Request, username: str = Form(...), password: str = For
 
     return templates.TemplateResponse("index.html", {"request": request, "message": "Login successful!"})
 
+
