@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from random import randrange
 
+
 app = FastAPI()
 
 class Item(BaseModel):
@@ -12,6 +13,7 @@ class Item(BaseModel):
     published: bool = True
     review: Optional[int] = None
 
+
 data = []
 
 def finding(item_id: int):
@@ -19,6 +21,7 @@ def finding(item_id: int):
         if value['id'] == item_id:
             return value
     return None
+
 
 @app.get('/get')
 def read_root():
@@ -41,3 +44,6 @@ async def create_item(item: Item):
     item_data['id'] = randrange(0, 999999)
     data.append(item_data)
     return {"data": "Item received", "item": item_data}
+
+
+

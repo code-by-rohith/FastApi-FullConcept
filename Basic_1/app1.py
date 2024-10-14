@@ -2,7 +2,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
-
 app = FastAPI()
 
 class Item(BaseModel):
@@ -11,6 +10,7 @@ class Item(BaseModel):
     description: str = None
     price: float
     tags: List[str] = []
+
 
 items = []
 
