@@ -9,7 +9,6 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 database = client.users_db
 users_collection = database.get_collection("users")
 
-
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 class User(BaseModel):
