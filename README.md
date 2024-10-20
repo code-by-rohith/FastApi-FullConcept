@@ -4,4 +4,4 @@ The diagram illustrates the workflow of a FastAPI application, focusing on reque
 
 For protected resources, FastAPI checks for a valid JWT token. If the token is valid, the server retrieves the protected data from the database. If the token is invalid or missing, access is denied. This sequence showcases FastAPI's efficient handling of requests, data validation, and authentication processes, ensuring that only authorized users can access sensitive resources.
 
-![image alt](https://github.com/code-by-rohith/FastApi-FullConcept/blob/main/ContentIImage/1.jpg?raw=true)
+![image alt](https://github.com/code-by-rohith/FastApi-FullConcept/blob/main/ContentIImage/1.png?raw=true)
