@@ -1,35 +1,25 @@
-# app1.py
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
-app = FastAPI()
 
-class Item(BaseModel):
-    id: int
-    name: str
-    description: str = None
-    price: float
-    tags: List[str] = []
+app=FastAPI()
 
+class details(str):
+    name ="key1"
+    name2="key2"
+    name3 = "key3"
+    name4 = "key4"
+    name5 = "key5"
 
-items = []
-
-@app.post("/items/", response_model=Item)
-async def create_item(item: Item):
-    items.append(item)
-    return item
-
-@app.get("/items/", response_model=List[Item])
-async def read_items():
-    return items
-
-@app.get("/items/{item_id}", response_model=Item)
-async def read_item(item_id: int):
-    for item in items:
-        if item.id == item_id:
-            return item
-    return {"error": "Item not found"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/get/{word}")
+def main(word):
+    if word == details.name:
+        return {"message":"Execute plan a"}
+    elif word==details.name2:
+        return {"message":"Execute plan b"}
+    elif word==details.name3:
+        return {"message":"Execute plan c"}
+    elif word==details.name4:
+        return {"message":"Execute plan d"}
+    elif word==details.name5:
+        return {"message":"Execute plan e"}
+    else:
+        return {"message":"key mot found"}
