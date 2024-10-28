@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Collection</title>
+</head>
+<body>
+    <h1>Book Collection</h1>
+
+    <h2>Add a New Book</h2>
+    <form id="bookForm">
+        <input type="text" id="title" placeholder="Title" required>
+        <input type="text" id="author" placeholder="Author" required>
+        <input type="number" id="year" placeholder="Year" required>
+        <button type="submit">Add Book</button>
+    </form>
+
+    <h2>Available Books</h2>
+    <ul id="bookList"></ul>
+
+    <script>
+        const bookForm = document.getElementById('bookForm');
+        const bookList = document.getElementById('bookList');
+
+        // Fetch and display all books from the API
+        async function fetchBooks() {
+            const response = await fetch('http://127.0.0.1:8000/books');
+            const books = await response.json();
+            bookList.innerHTML = ''; // Clear the list
+
+            // Populate the list with books
+            books.forEach(book => {
+                const li = document.createElement('li');
+                li.textContent = `${book.title} by ${book.author} (${book.year})`;
+                bookList.appendChild(li);
+            });
+        }
+
+        // Handle form submission to add a new book via API
+        bookForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const newBook = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                year: parseInt(document.getElementById('year').value)
+            };
+
+            // Send the new book to the server (POST request)
+            await fetch('http://127.0.0.1:8000/books', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newBook)
+            });
+
+            // Refresh the list of books after adding a new one
+            fetchBooks();
+        });
+
+        // Fetch books on page load
+        fetchBooks();
+    </script>
+</body>
+</html>
