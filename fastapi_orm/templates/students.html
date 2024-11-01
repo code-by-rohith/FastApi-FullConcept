@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+</head>
+<body>
+    <h1>Student Management</h1>
+
+    <h2>Add Student</h2>
+    <form method="post" action="/students">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="roll" placeholder="Roll No" required>
+        <input type="number" name="marks" placeholder="Marks" required>
+        <input type="number" name="total" placeholder="Total" required>
+        <button type="submit">Add Student</button>
+    </form>
+
+    <h2>Student List</h2>
+    <ul>
+        {% for student in students %}
+            <li>{{ student.name }} (Roll: {{ student.roll }}, Marks: {{ student.marks }}, Total: {{ student.total }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
