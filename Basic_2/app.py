@@ -5,7 +5,6 @@ from typing import Optional, List
 
 app = FastAPI()
 
-# Class for Personal Details
 class PersonalDetails(BaseModel):
     name: str 
     age: int 
