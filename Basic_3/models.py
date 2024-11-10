@@ -6,7 +6,6 @@ DATABASE_URL = "dbname='student' user='postgres' password='lingavani' host='loca
 
 app = FastAPI()
 
-
 class Item(BaseModel):
     id: int = None
     name: str
