@@ -47,7 +47,11 @@ create_table()
 def getting():
     conn = get_db_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT * FROM post WHERE id =  7801")
+    demo = cursor.fetchone()
+    print(demo)
     cursor.execute("SELECT * FROM post")
+    
     posts = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -58,6 +62,7 @@ def posting(post: Item):
     random_id = random.randint(1000, 9999) 
     conn = get_db_connection()
     cursor = conn.cursor()
+
     
     cursor.execute(
         """INSERT INTO post (id, title, content, published) 
@@ -66,7 +71,9 @@ def posting(post: Item):
     )
     new_post = cursor.fetchone()
     conn.commit()
-    cursor.close()
+    cursor.close() 
     conn.close()
+
+
     
     return {"data": new_post}
