@@ -1,71 +1,72 @@
 import psycopg2
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
-DATABASE_URL = "dbname='student' user='postgres' password='lingavani' host='localhost' port='5432'"
+from psycopg2.extras import RealDictCursor
+import time
+import random
 
 app = FastAPI()
 
 class Item(BaseModel):
-    id: int = None
-    name: str
-    description: str
+    title: str
+    content: str
+    published: bool = True
 
+# Database connection
 def get_db_connection():
-    return psycopg2.connect(DATABASE_URL)
+    while True:
+        try:
+            conn = psycopg2.connect(host='localhost', database='student', user='postgres',
+                                     password='lingavani', cursor_factory=RealDictCursor)
+            return conn
+        except Exception as e:
+            print(f'Connection failed! Error: {e}')
+            time.sleep(4)
 
-@app.post("/items/", response_model=Item)
-def create_item(item: Item):
+# Create table if it does not exist
+def create_table():
     conn = get_db_connection()
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO items (name, description) VALUES (%s, %s) RETURNING id",
-                (item.name, item.description)
-            )
-            item.id = cursor.fetchone()[0]
-    return item
+    cursor = conn.cursor()
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS post (
+        id INT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        published BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """
+    cursor.execute(create_table_query)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
-@app.get("/items/", response_model=list[Item])
-def read_items():
-    conn = get_db_connection()
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id, name, description FROM items")
-            rows = cursor.fetchall()
-            return [Item(id=row[0], name=row[1], description=row[2]) for row in rows]
+create_table()
 
-@app.get("/items/{item_id}", response_model=Item)
-def read_item(item_id: int):
+@app.get('/get')
+def getting():
     conn = get_db_connection()
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT id, name, description FROM items WHERE id = %s", (item_id,))
-            row = cursor.fetchone()
-            if row is None:
-                raise HTTPException(status_code=404, detail="Item not found")
-            return Item(id=row[0], name=row[1], description=row[2])
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM post")
+    posts = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return {"data": posts}
 
-@app.put("/items/{item_id}", response_model=Item)
-def update_item(item_id: int, item: Item):
+@app.post('/post')
+def posting(post: Item):
+    random_id = random.randint(1000, 9999) 
     conn = get_db_connection()
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "UPDATE items SET name = %s, description = %s WHERE id = %s",
-                (item.name, item.description, item_id)
-            )
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail="Item not found")
-            item.id = item_id
-    return item
-
-@app.delete("/items/{item_id}")
-def delete_item(item_id: int):
-    conn = get_db_connection()
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute("DELETE FROM items WHERE id = %s", (item_id,))
-            if cursor.rowcount == 0:
-                raise HTTPException(status_code=404, detail="Item not found")
-    return {"detail": "Item deleted"}
+    cursor = conn.cursor()
+    
+    cursor.execute(
+        """INSERT INTO post (id, title, content, published) 
+           VALUES (%s, %s, %s, %s) RETURNING *""",
+        (random_id, post.title, post.content, post.published)
+    )
+    new_post = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return {"data": new_post}
