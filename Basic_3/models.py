@@ -12,7 +12,7 @@ class Item(BaseModel):
     content: str
     published: bool = True
 
-# Database connection
+
 def get_db_connection():
     while True:
         try:
@@ -23,7 +23,7 @@ def get_db_connection():
             print(f'Connection failed! Error: {e}')
             time.sleep(4)
 
-# Create table if it does not exist
+
 def create_table():
     conn = get_db_connection()
     cursor = conn.cursor()
