@@ -51,7 +51,6 @@ def getting():
     demo = cursor.fetchone()
     print(demo)
     cursor.execute("SELECT * FROM post")
-    
     posts = cursor.fetchall()
     cursor.close()
     conn.close()
