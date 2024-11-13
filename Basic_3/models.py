@@ -55,7 +55,7 @@ def getting():
     cursor.close()
     conn.close()
     return {"data": posts}
-
+    
 @app.post('/post')
 def posting(post: Item):
     random_id = random.randint(1000, 9999) 
