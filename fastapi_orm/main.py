@@ -35,12 +35,6 @@ def get_db() -> Generator[Session, None, None]:
 @app.get("/", response_class=RedirectResponse)
 async def read_root():
     return RedirectResponse(url="/students")
-
-@app.get("/students", response_class=templates.TemplateResponse)
-async def get_students(request: Request, db: Session = Depends(get_db)):
-    students = db.query(Student).all()
-    return templates.TemplateResponse("students.html", {"request": request, "students": students})
-
 @app.post("/students", response_class=RedirectResponse)
 async def create_student(request: Request, db: Session = Depends(get_db)):
     form_data = await request.form()
@@ -53,3 +47,9 @@ async def create_student(request: Request, db: Session = Depends(get_db)):
     db.add(new_student)
     db.commit()
     return RedirectResponse(url="/students", status_code=303)
+
+@app.get("/students", response_class=templates.TemplateResponse)
+async def get_students(request: Request, db: Session = Depends(get_db)):
+    students = db.query(Student).all()
+    return templates.TemplateResponse("students.html", {"request": request, "students": students})
+
