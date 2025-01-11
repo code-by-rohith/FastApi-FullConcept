@@ -1,28 +1,74 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import threading
 import time
-import asyncio
 
-# An asynchronous function simulating a task with a delay
-async def main(i):
-    print("task 1")
-    await asyncio.sleep(5)  # Simulate delay (I/O operation or computation)
-    print("task 2")
+app = FastAPI()
 
-# Another async function that calls 'main'
-async def main_2():
-    print("starting process")
-    await main(5)  # Wait for 'main' to complete
-    print("end process")
+# In-memory storage for demonstration purposes
+fake_db = {}
 
-# A simple async function that prints a message
-async def data():
-    await asyncio.sleep(2)
-    print("hi")
 
-async def mai():
-    print("no returns")
-# Use 'asyncio.run()' to run the asynchronous tasks concurrently
-async def run():
-    await asyncio.gather(main_2(), data(),mai())  # Running both tasks concurrently
+class Item(BaseModel):
+    name: str
+    description: str = None
 
-# This line runs the event loop and executes the 'run' function
-asyncio.run(run())
+
+# Helper function to simulate a blocking task
+def blocking_task(task_name: str):
+    print(f"Starting {task_name}...")
+    time.sleep(2)  # Simulate blocking task, e.g., database I/O
+    print(f"{task_name} completed!")
+
+
+# CREATE operation
+@app.post("/items/")
+async def create_item(item: Item):
+    # Simulating a blocking task in a separate thread
+    thread = threading.Thread(target=blocking_task, args=("Creating item",))
+    thread.start()
+
+    # Storing item in the fake database (simulated)
+    fake_db[item.name] = item
+    return {"message": "Item created successfully", "item": item}
+
+
+# READ operation
+@app.get("/items/{item_name}")
+async def read_item(item_name: str):
+    # Simulating a blocking task in a separate thread
+    thread = threading.Thread(target=blocking_task, args=("Reading item",))
+    thread.start()
+
+    item = fake_db.get(item_name)
+    if item:
+        return {"item": item}
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+# UPDATE operation
+@app.put("/items/{item_name}")
+async def update_item(item_name: str, item: Item):
+    # Simulating a blocking task in a separate thread
+    thread = threading.Thread(target=blocking_task, args=("Updating item",))
+    thread.start()
+
+    if item_name in fake_db:
+        fake_db[item_name] = item
+        return {"message": "Item updated successfully", "item": item}
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+# DELETE operation
+@app.delete("/items/{item_name}")
+async def delete_item(item_name: str):
+    # Simulating a blocking task in a separate thread
+    thread = threading.Thread(target=blocking_task, args=("Deleting item",))
+    thread.start()
+
+    if item_name in fake_db:
+        del fake_db[item_name]
+        return {"message": "Item deleted successfully"}
+    raise HTTPException(status_code=404, detail="Item not found")
+
+# Run FastAPI application

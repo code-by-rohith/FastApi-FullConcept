@@ -61,6 +61,7 @@ def get_latest():
     post = my_post[-1]
     return {"Latest student record": post}
 
+
 @app.delete('/delete/{id}', status_code=status.HTTP_226_IM_USED)
 def delete_student(id: int):
     index = helper_delete(id)
